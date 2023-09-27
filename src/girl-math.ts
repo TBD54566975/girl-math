@@ -8,34 +8,28 @@ const USDC_SUBUNITS_PER_UNIT = 100
 const USDC_SUBUNITS_SIG_DIGS = 6
 
 /**
- * TODO: double check that below param is sourceAmountSubunitsAfterFee and not sourceAmountSubunits
- * @param payoutAmountSubunitsAfterFee quote amount subunits being used to purchase target currency
- * @param priceOfPayoutCurrencyInPayinCurrency spot price of 1 whole payout currency, in terms of payin currency units.
- * @returns target amount subunits that can be bought with this amount of quote currency
+ * @param payinCurrency starting currency code that customer wants to convert to @param payoutCurrency
+ * @param payoutCurrency currency code that customer wants to end up with
+ * @param payinAmountSubunits amount subunits of @param payinCurrency being used to purchase @param payoutCurrency
+ * @param payoutCurrencyUnitsPerPayinCurrencyUnit spot price of 1 whole @param payoutCurrency unit, in terms of @param payinCurency units.
+ * @returns Number of @param payoutCurrency subunits that can be bought with @param payinAmountSubunits amount of @param payinCurency.
  */
-export function calculatePayoutAmountSubunits(payinCurrency: string, payoutCurrency: string, payoutAmountSubunitsAfterFee: number,
-  priceOfPayoutCurrencyInPayinCurrency: string): bigint {
-  const { subunitsPerUnit: sourceSubunitsPerUnit, } = getConversionConstants(payinCurrency)
-  const { subunitsPerUnit: targetSubunitsPerUnit, } = getConversionConstants(payoutCurrency)
-  const priceOfTargetInSourceStripped = parseFloat(priceOfPayoutCurrencyInPayinCurrency.replace(/,/g, ''))
-  const priceOfTargetInSourceSubunits = priceOfTargetInSourceStripped * sourceSubunitsPerUnit
-  const targetAmountUnits = payoutAmountSubunitsAfterFee / priceOfTargetInSourceSubunits
-  const targetAmountSubunits = Math.floor(targetAmountUnits * targetSubunitsPerUnit)
-  return BigInt(targetAmountSubunits)
-}
-
-export function calculatePayoutAmount(payinCurency: string, payinAmountSubunits: number,
-  payoutUnitsPerPayinUnit: string): number {
-  const payinAmountUnits = convertSubunitsToUnits(payinAmountSubunits, payinCurency)
-  const payoutAmount = Number(payinAmountUnits) * Number(payoutUnitsPerPayinUnit)
-  return payoutAmount
+export function calculatePayoutAmountSubunits(payinCurrency: string, payoutCurrency: string, payinAmountSubunits: number,
+  payoutCurrencyUnitsPerPayinCurrencyUnit: string): bigint {
+  const { subunitsPerUnit: payinSubunitsPerUnit, } = getConversionConstants(payinCurrency)
+  const { subunitsPerUnit: payoutSubunitsPerUnit, } = getConversionConstants(payoutCurrency)
+  const priceOfTargetInSourceStripped = parseFloat(payoutCurrencyUnitsPerPayinCurrencyUnit.replace(/,/g, ''))
+  const priceOfTargetInSourceSubunits = priceOfTargetInSourceStripped * payinSubunitsPerUnit
+  const payoutAmountUnits = payinAmountSubunits / priceOfTargetInSourceSubunits
+  const payoutAmountSubunits = Math.floor(payoutAmountUnits * payoutSubunitsPerUnit)
+  return BigInt(payoutAmountSubunits)
 }
 
 /**
  * Converts a number @param amountSubunits into a unit amount string, with a decimal point for overflow subunits.
- * @param amountSubunits amount subunits of @param currencyCode
- * @param currencyCode
- * @returns a whole unit amount with extra subunits after a decimal point
+ * @param amountSubunits starting amount subunits of @param currencyCode
+ * @param currencyCode referring to @param amountSubunits
+ * @returns a whole unit amount of @param currencyCode with extra subunits after a decimal point
  */
 export function convertSubunitsToUnits(amountSubunits: number, currencyCode: string): string {
   const { subunitsPerUnit, sigDigs } = getConversionConstants(currencyCode)
@@ -57,6 +51,12 @@ export function convertSubunitsToUnits(amountSubunits: number, currencyCode: str
   return `${amountUnits}.${subunitsString}`
 }
 
+/**
+ * Converts a number @param amountUnits into a subunit amount string
+ * @param amountUnits starting amount subunits of @param currencyCode
+ * @param currencyCode referring to @param amountUnits
+ * @returns subunits string of @param currencyCode that @param amountUnits contains
+ */
 export function convertUnitsToSubunits(amountUnits: string, currencyCode: string): string {
   const { sigDigs } = getConversionConstants(currencyCode)
   const unitWithoutCommas = amountUnits.replace(/[,]/g, '')
