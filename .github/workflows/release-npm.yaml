@@ -21,7 +21,6 @@ jobs:
   publish-npm:
     defaults:
       run:
-        working-directory: js
         shell: bash
     name: NPM Publish
     runs-on: ubuntu-latest
