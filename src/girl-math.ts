@@ -6,6 +6,8 @@ const KES_SUBUNITS_PER_UNIT = 100
 const KES_SUBUNITS_SIG_DIGS = 2
 const USDC_SUBUNITS_PER_UNIT = 100
 const USDC_SUBUNITS_SIG_DIGS = 6
+const MXN_SUBUNITS_PER_UNIT = 100
+const MXN_SUBUNITS_SIG_DIGS = 2
 
 /**
  * @param payinCurrency starting currency code that customer wants to convert to @param payoutCurrency
@@ -80,6 +82,8 @@ function getConversionConstants(currencyCode: string): {subunitsPerUnit: number,
       return { subunitsPerUnit: BTC_SUBUNITS_PER_UNIT, sigDigs: BTC_SUBUNITS_SIG_DIGS }
     case 'KES':
       return { subunitsPerUnit: KES_SUBUNITS_PER_UNIT, sigDigs: KES_SUBUNITS_SIG_DIGS }
+    case 'MXN':
+      return { subunitsPerUnit: MXN_SUBUNITS_PER_UNIT, sigDigs: MXN_SUBUNITS_SIG_DIGS }
     default:
       throw Error(`unexpected currency [currency=${currencyCode}]`)
   }
