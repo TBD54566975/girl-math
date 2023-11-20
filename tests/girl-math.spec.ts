@@ -1,19 +1,50 @@
-import { calculatePayoutAmountSubunits, convertSubunitsToUnits, convertUnitsToSubunits} from '../src/girl-math.js'
+import { calculatePayoutAmountSubunits, calculatePayoutAmountSubunitsWithPayinCurrencySpotPrice, calculatePayoutAmountSubunitsWithPayoutCurrencySpotPrice, convertSubunitsToUnits, convertUnitsToSubunits} from '../src/girl-math.js'
 import { expect } from 'chai'
 
 describe('math-helpers', () => {
-  it('calculate-amount-btc', async () => {
-    const targetMoney = calculatePayoutAmountSubunits('USD', 'BTC', 100_00, '30,741.70')
+  it('calculate-amount-usd-to-btc-with-payout-currency-spot-price', async () => {
+    let targetMoney = calculatePayoutAmountSubunitsWithPayoutCurrencySpotPrice('USD', 'BTC', 100_00, '0.0000325291')
     expect(targetMoney).to.equal(325291n)
   })
 
+  it('calculate-amount-btc-to-usd-payout-currency-spot-price', async () => {
+    let targetMoney = calculatePayoutAmountSubunitsWithPayoutCurrencySpotPrice('BTC', 'USD', 325291, '30,741.70')
+    expect(targetMoney).to.equal(99_99n)
+  })
+
+  it('calculate-amount-btc-to-kes-payout-currency-spot-price', async () => {
+    let targetMoney = calculatePayoutAmountSubunitsWithPayoutCurrencySpotPrice('BTC', 'KES', 2500, '4560829.07955')
+    expect(targetMoney).to.equal(11402n)
+  })
+
+  it('calculate-amount-usd-to-btc-with-payin-currency-spot-price', async () => {
+    let targetMoney = calculatePayoutAmountSubunits('USD', 'BTC', 100_00, '30,741.70')
+    expect(targetMoney).to.equal(325291n)
+    targetMoney = calculatePayoutAmountSubunitsWithPayinCurrencySpotPrice('USD', 'BTC', 100_00, '30,741.70')
+    expect(targetMoney).to.equal(325291n)
+  })
+
+  it('calculate-amount-btc-to-usd-with-payin-currency-spot-price', async () => {
+    let targetMoney = calculatePayoutAmountSubunits('BTC', 'USD', 325291, '0.0000325291')
+    expect(targetMoney).to.equal(100_00n)
+    targetMoney = calculatePayoutAmountSubunitsWithPayinCurrencySpotPrice('BTC', 'USD', 325291, '0.0000325291')
+    expect(targetMoney).to.equal(100_00n)
+  })
+
+  it('calculate-amount-btc-to-kes-with-payin-currency-spot-price', async () => {
+    let targetMoney = calculatePayoutAmountSubunits('BTC', 'KES', 2500, '0.000000219258381')
+    expect(targetMoney).to.equal(11402n)
+    targetMoney = calculatePayoutAmountSubunitsWithPayinCurrencySpotPrice('BTC', 'KES', 2500, '0.000000219258381')
+    expect(targetMoney).to.equal(11402n)
+  })
+
   it('calculate-amount-btc-no-comma', async () => {
-    const targetMoney = calculatePayoutAmountSubunits('USD', 'BTC', 100_00, '741.70')
+    let targetMoney = calculatePayoutAmountSubunitsWithPayoutCurrencySpotPrice('USD', 'BTC', 100_00, '0.00134825401')
     expect(targetMoney).to.equal(13482540n)
   })
 
   it('calculate-amount-btc-no-decimals-no-commas', async () => {
-    const targetMoney = calculatePayoutAmountSubunits('USD', 'BTC', 100_00, '30741')
+    let targetMoney = calculatePayoutAmountSubunitsWithPayoutCurrencySpotPrice('USD', 'BTC', 100_00, '0.00003252984')
     expect(targetMoney).to.equal(325298n)
   })
 
