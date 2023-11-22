@@ -1,4 +1,4 @@
-import { calculatePayoutAmountSubunits, calculatePayoutAmountSubunitsWithPayinCurrencySpotPrice, calculatePayoutAmountSubunitsWithPayoutCurrencySpotPrice, convertSubunitsToUnits, convertUnitsToSubunits } from '../src/girl-math.js';
+import { calculatePayoutAmountSubunitsWithPayinCurrencySpotPrice, calculatePayoutAmountSubunitsWithPayoutCurrencySpotPrice, convertSubunitsToUnits, convertUnitsToSubunits } from '../src/girl-math.js';
 import { expect } from 'chai';
 describe('math-helpers', () => {
     it('calculate-amount-usd-to-btc-with-payout-currency-spot-price', async () => {
@@ -14,19 +14,19 @@ describe('math-helpers', () => {
         expect(targetMoney).to.equal(11402n);
     });
     it('calculate-amount-usd-to-btc-with-payin-currency-spot-price', async () => {
-        let targetMoney = calculatePayoutAmountSubunits('USD', 'BTC', 100_00, '30,741.70');
+        let targetMoney = calculatePayoutAmountSubunitsWithPayinCurrencySpotPrice('USD', 'BTC', 100_00, '30,741.70');
         expect(targetMoney).to.equal(325291n);
         targetMoney = calculatePayoutAmountSubunitsWithPayinCurrencySpotPrice('USD', 'BTC', 100_00, '30,741.70');
         expect(targetMoney).to.equal(325291n);
     });
     it('calculate-amount-btc-to-usd-with-payin-currency-spot-price', async () => {
-        let targetMoney = calculatePayoutAmountSubunits('BTC', 'USD', 325291, '0.0000325291');
+        let targetMoney = calculatePayoutAmountSubunitsWithPayinCurrencySpotPrice('BTC', 'USD', 325291, '0.0000325291');
         expect(targetMoney).to.equal(10000n);
         targetMoney = calculatePayoutAmountSubunitsWithPayinCurrencySpotPrice('BTC', 'USD', 325291, '0.0000325291');
         expect(targetMoney).to.equal(10000n);
     });
     it('calculate-amount-btc-to-kes-with-payin-currency-spot-price', async () => {
-        let targetMoney = calculatePayoutAmountSubunits('BTC', 'KES', 2500, '0.000000219258381');
+        let targetMoney = calculatePayoutAmountSubunitsWithPayinCurrencySpotPrice('BTC', 'KES', 2500, '0.000000219258381');
         expect(targetMoney).to.equal(11402n);
         targetMoney = calculatePayoutAmountSubunitsWithPayinCurrencySpotPrice('BTC', 'KES', 2500, '0.000000219258381');
         expect(targetMoney).to.equal(11402n);

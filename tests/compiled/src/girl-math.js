@@ -6,19 +6,20 @@ const KES_SUBUNITS_PER_UNIT = 100;
 const KES_SUBUNITS_SIG_DIGS = 2;
 const USDC_SUBUNITS_PER_UNIT = 100;
 const USDC_SUBUNITS_SIG_DIGS = 6;
+const MXN_SUBUNITS_PER_UNIT = 100;
+const MXN_SUBUNITS_SIG_DIGS = 2;
 /**
  * @param payinCurrency starting currency code that customer wants to convert to @param payoutCurrency
  * @param payoutCurrency currency code that customer wants to end up with
  * @param payinAmountSubunits amount subunits of @param payinCurrency being used to purchase @param payoutCurrency
  * @param payinCurrencyUnitsPerPayoutCurrencyUnit price of 1 whole @param payoutCurrency unit, in terms of @param payinCurency units.
+ * Say payin currency is USD, payout currency is BTC, the spot price would be written as 30,741.70 USD/BTC, so 30,741.70 would be this arg.
+ * If payin currency is BTC, and payout currency is USD, the spot price would be written as 0.0000325291 BTC/USD, so 0.0000325291 would be this arg.
  * @returns Number of @param payoutCurrency subunits that can be bought with @param payinAmountSubunits amount of @param payinCurency.
  */
-export function calculatePayoutAmountSubunits(payinCurrency, payoutCurrency, payinAmountSubunits, payoutCurrencyUnitsPerPayinCurrencyUnit) {
-    return calculatePayoutAmountSubunitsWithPayinCurrencySpotPrice(payinCurrency, payoutCurrency, payinAmountSubunits, payoutCurrencyUnitsPerPayinCurrencyUnit);
-}
 export function calculatePayoutAmountSubunitsWithPayinCurrencySpotPrice(payinCurrency, payoutCurrency, payinAmountSubunits, payinCurrencyUnitsPerPayoutCurrencyUnit) {
-    const { subunitsPerUnit: payinSubunitsPerUnit, sigDigs: payinSigDigs } = getConversionConstants(payinCurrency);
-    const { subunitsPerUnit: payoutSubunitsPerUnit, sigDigs: payoutSigDigs } = getConversionConstants(payoutCurrency);
+    const { subunitsPerUnit: payinSubunitsPerUnit } = getConversionConstants(payinCurrency);
+    const { subunitsPerUnit: payoutSubunitsPerUnit } = getConversionConstants(payoutCurrency);
     const payinUnitsPerPayoutUnitStripped = parseFloat(payinCurrencyUnitsPerPayoutCurrencyUnit.replace(/,/g, ''));
     const payinSubunitsPerPayoutUnit = payinUnitsPerPayoutUnitStripped * payinSubunitsPerUnit;
     const payoutAmountUnits = payinAmountSubunits / payinSubunitsPerPayoutUnit;
@@ -30,11 +31,13 @@ export function calculatePayoutAmountSubunitsWithPayinCurrencySpotPrice(payinCur
  * @param payoutCurrency currency code that customer wants to end up with
  * @param payinAmountSubunits amount subunits of @param payinCurrency being used to purchase @param payoutCurrency
  * @param payoutCurrencyUnitsPerPayinCurrencyUnit price of 1 whole @param payinCurency unit, in terms of @param payoutCurrency units.
+ * Say payin currency is USD, payout currency is BTC, the spot price would be written as 0.0000325291 BTC/USD, so 0.0000325291 would be this arg.
+ * If payin currency is BTC, and payout currency is USD, the spot price would be written as 30,741.70 USD/BTC, so 30,741.70 would be this arg.
  * @returns Number of @param payoutCurrency subunits that can be bought with @param payinAmountSubunits amount of @param payinCurency.
  */
 export function calculatePayoutAmountSubunitsWithPayoutCurrencySpotPrice(payinCurrency, payoutCurrency, payinAmountSubunits, payoutCurrencyUnitsPerPayinCurrencyUnit) {
-    const { subunitsPerUnit: payinSubunitsPerUnit, sigDigs: payinSigDigs } = getConversionConstants(payinCurrency);
-    const { subunitsPerUnit: payoutSubunitsPerUnit, sigDigs: payoutSigDigs } = getConversionConstants(payoutCurrency);
+    const { subunitsPerUnit: payinSubunitsPerUnit } = getConversionConstants(payinCurrency);
+    const { subunitsPerUnit: payoutSubunitsPerUnit } = getConversionConstants(payoutCurrency);
     const payoutUnitPerPayinUnitsStripped = parseFloat(payoutCurrencyUnitsPerPayinCurrencyUnit.replace(/,/g, ''));
     const payoutUnitsPerPayinUnit = payinSubunitsPerUnit / payoutUnitPerPayinUnitsStripped;
     const payoutAmountUnits = payinAmountSubunits / payoutUnitsPerPayinUnit;
@@ -92,6 +95,8 @@ function getConversionConstants(currencyCode) {
             return { subunitsPerUnit: BTC_SUBUNITS_PER_UNIT, sigDigs: BTC_SUBUNITS_SIG_DIGS };
         case 'KES':
             return { subunitsPerUnit: KES_SUBUNITS_PER_UNIT, sigDigs: KES_SUBUNITS_SIG_DIGS };
+        case 'MXN':
+            return { subunitsPerUnit: MXN_SUBUNITS_PER_UNIT, sigDigs: MXN_SUBUNITS_SIG_DIGS };
         default:
             throw Error(`unexpected currency [currency=${currencyCode}]`);
     }
